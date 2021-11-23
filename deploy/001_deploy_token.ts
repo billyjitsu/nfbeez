@@ -9,10 +9,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await deploy('NFBeez', {
     from: deployer,
-    args: ["NOTTheNFBeez",
-    "NNFB", 
+    args: ["RoyalTest",
+    "Test", 
     "ipfs://QmbdVXi8dMDRcFfeh1m6ABVsv8Cmsn74YAsSBVmkG7sMyd/", 
-    "ipfs://Qmf3jnLANDhhVuUkjCgVDgRWoJsEo7s2dqzGGSGVrQcUhL/1.json"],
+    "ipfs://Qmf3jnLANDhhVuUkjCgVDgRWoJsEo7s2dqzGGSGVrQcUhL/1.json",
+    ["0xe2b8651bF50913057fF47FC4f02A8e12146083B8","0xe2b8651bF50913057fF47FC4f02A8e12146083B8"]],
     log: true,
   });
 

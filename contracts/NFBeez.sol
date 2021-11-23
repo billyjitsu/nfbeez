@@ -25,38 +25,60 @@ pragma solidity >=0.7.0 <0.9.0;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "hardhat/console.sol";
+import "./HasSecondarySaleFees.sol";
 
 
-contract NFBeez is ERC721Enumerable, Ownable {
+contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
   using Strings for uint256;
 
   string public baseURI;
   string public baseExtension = ".json";
   string public notRevealedUri;
   uint256 public cost = .1 ether;  // Update price
-  uint256 public winRate = 5;    // 5% winrate
-  uint256 public maxSupply = 300;  // Will be voted
+  uint256 public maxSupply = 3;  // Will be voted
   uint256 public maxMintAmount = 10;   // update
   uint256 public nftPerAddressLimit = 40;
-  uint256 private seed; 
   bool public paused = false;
   bool public revealed = false;
   bool public onlyWhitelisted = true;
   address[] public whitelistedAddresses;
+  address payable[2] royaltyRecipients;
   mapping(address => uint256) public addressMintedBalance;
 
-  //Emit event to send out winning  
-  event WinningMint(address sender, uint256 prize);
+  //events
   event MintedNFT(address sender, uint256 mintAmount);
   //Emit event on royalty Epor.io
-  //event SecondarySaleFees(uint256 tokenId, address[] recipients, uint[] bps);
+  event SecondarySaleFees(uint256 tokenId, address[] recipients, uint[] bps);
 
-  constructor(string memory _name, string memory _symbol, string memory _initBaseURI, string memory _initNotRevealedUri) 
-    ERC721(_name, _symbol) payable {
+  constructor(string memory _name, string memory _symbol, string memory _initBaseURI, string memory _initNotRevealedUri, address payable[2] memory _royaltyRecipients) 
+    ERC721(_name, _symbol) 
+    HasSecondarySaleFees(new address payable[](0), new uint256[](0)) payable {
+    require(_royaltyRecipients[0] != address(0), "Invalid address");
+    require(_royaltyRecipients[1] != address(0), "Invalid address");
     setBaseURI(_initBaseURI);
     setNotRevealedURI(_initNotRevealedUri);
+    
+    royaltyRecipients = _royaltyRecipients;
+    
+    address payable[] memory thisAddressInArray = new address payable[](1);
+    thisAddressInArray[0] = payable(0xe2b8651bF50913057fF47FC4f02A8e12146083B8);
+    uint256[] memory royaltyWithTwoDecimals = new uint256[](1);
+    royaltyWithTwoDecimals[0] = 500;
+
+    _setCommonRoyalties(thisAddressInArray, royaltyWithTwoDecimals);
   }
+
+  function supportsInterface(bytes4 interfaceId)
+    public
+    view
+    virtual
+    override(ERC721Enumerable, HasSecondarySaleFees)
+    returns (bool)
+    {
+        return ERC721.supportsInterface(interfaceId) ||
+        HasSecondarySaleFees.supportsInterface(interfaceId);
+    }
+
 
   // internal
   function _baseURI() internal view virtual override returns (string memory) {
@@ -83,25 +105,8 @@ contract NFBeez is ERC721Enumerable, Ownable {
     for (uint256 i = 1; i <= _mintAmount; i++) {
       addressMintedBalance[msg.sender]++;
       _safeMint(msg.sender, supply + i);
-
-      /*----adding in random reward system -----*/
-      uint256 randomNumber = (block.difficulty + block.timestamp + seed) % 100;
-      seed = randomNumber;
-         if (msg.sender != owner()) {
-            if (randomNumber < winRate) {
-                console.log("%s won!", msg.sender);
-                require(cost <= address(this).balance, "Trying to withdraw more money than they contract has.");
-                (bool success, ) = (msg.sender).call{value: cost}("");
-                require(success, "Failed to withdraw money from contract.");
-
-                //emit event of winning
-                emit WinningMint(msg.sender, cost);
-            }
-        
-        }
-      /* ----------------------------*/
-      
     }
+
     //Emit event that Mint Job has minted the NFT
     emit MintedNFT(msg.sender, _mintAmount);
   }
@@ -148,10 +153,6 @@ contract NFBeez is ERC721Enumerable, Ownable {
   
   function setCost(uint256 _newCost) public onlyOwner() {
     cost = _newCost;
-  }
-
-  function setWinRate(uint256 _newRate) public onlyOwner() {
-    winRate = _newRate;
   }
 
   function setmaxMintAmount(uint256 _newmaxMintAmount) public onlyOwner() {
