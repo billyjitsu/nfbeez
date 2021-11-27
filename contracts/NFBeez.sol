@@ -21,7 +21,7 @@ pragma solidity >=0.7.0 <0.9.0;
 //                       %,...........,.                      
 //                           /*.../.      
 
-//code forked from Hashlip's work.  A true teacher
+//code forked from Hashlip's work.  A great teacher
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -35,7 +35,7 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
   string public baseExtension = ".json";
   string public notRevealedUri;
   uint256 public cost = .1 ether;  // Update price
-  uint256 public maxSupply = 3;  // Will be voted
+  uint256 public maxSupply = 300;  // Will be voted
   uint256 public maxMintAmount = 10;   // update
   uint256 public nftPerAddressLimit = 40;
   bool public paused = false;
@@ -45,8 +45,10 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
   address payable[2] royaltyRecipients;
   mapping(address => uint256) public addressMintedBalance;
 
+  //events - OG
+ // event MintedNFT(address sender, uint256 mintAmount);
   //events
-  event MintedNFT(address sender, uint256 mintAmount);
+  event MintedNFT(address sender, uint256 mintAmount, uint256 _nftId);
   //Emit event on royalty Epor.io
   event SecondarySaleFees(uint256 tokenId, address[] recipients, uint[] bps);
 
@@ -61,7 +63,7 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
     royaltyRecipients = _royaltyRecipients;
     
     address payable[] memory thisAddressInArray = new address payable[](1);
-    thisAddressInArray[0] = payable(0xe2b8651bF50913057fF47FC4f02A8e12146083B8);
+    thisAddressInArray[0] = payable(_royaltyRecipients[0]);  //0xe2b8651bF50913057fF47FC4f02A8e12146083B8
     uint256[] memory royaltyWithTwoDecimals = new uint256[](1);
     royaltyWithTwoDecimals[0] = 500;
 
@@ -105,10 +107,11 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
     for (uint256 i = 1; i <= _mintAmount; i++) {
       addressMintedBalance[msg.sender]++;
       _safeMint(msg.sender, supply + i);
+      emit MintedNFT(msg.sender, _mintAmount, supply + i);
     }
 
-    //Emit event that Mint Job has minted the NFT
-    emit MintedNFT(msg.sender, _mintAmount);
+    //Emit event that Mint Job has minted the NFT - OG
+    //emit MintedNFT(msg.sender, _mintAmount);
   }
   
   function isWhitelisted(address _user) public view returns (bool) {
