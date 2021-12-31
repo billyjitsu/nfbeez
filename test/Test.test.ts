@@ -10,11 +10,11 @@ import {ethers, deployments, getNamedAccounts, getUnnamedAccounts} from 'hardhat
 // we create a stup function that can be called by every test and setup variable for easy to read tests
 async function setup () {
   // it first ensure the deployment is executed and reset (use of evm_snaphost for fast test)
-  await deployments.fixture(["Token"]);
+  await deployments.fixture(["Pugeez"]);
 
   // we get an instantiated contract in the form of a ethers.js Contract instance:
   const contracts = {
-    Token: (await ethers.getContract('Token')),
+    Token: (await ethers.getContract('Pugeez')),
   };
 
   // we get the tokenOwner
@@ -38,7 +38,7 @@ async function setup () {
 // `describe` receives the name of a section of your test suite, and a callback.
 // The callback must define the tests of that section. This callback can't be
 // an async function.
-describe("Token contract", function() {
+describe("Pugeez contract", function() {
 
   // You can nest describe calls to create subsections.
   describe("Deployment", function () {
@@ -72,15 +72,15 @@ describe("Token contract", function() {
     it("Should transfer tokens between accounts", async function () {
       const {Token, users, tokenOwner} = await setup();
       // Transfer 50 tokens from owner to users[0]
-      await tokenOwner.Token.transfer(users[0].address, 50);
+      await tokenOwner.Token.transfer(users[0].address, 1);
       const users0Balance = await Token.balanceOf(users[0].address);
-      expect(users0Balance).to.equal(50);
+      expect(users0Balance).to.equal(1);
 
       // Transfer 50 tokens from users[0] to users[1]
       // We use .connect(signer) to send a transaction from another account
-      await users[0].Token.transfer(users[1].address, 50);
+      await users[0].Token.transfer(users[1].address, 1);
       const users1Balance = await Token.balanceOf(users[1].address);
-      expect(users1Balance).to.equal(50);
+      expect(users1Balance).to.equal(1);
     });
 
     it("Should fail if sender doesn’t have enough tokens", async function () {

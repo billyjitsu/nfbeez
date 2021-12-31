@@ -9,20 +9,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await deploy('NFBeez', {
     from: deployer,
-    args: ["xDaiRedo2",
-    "OST2", 
+    args: ["NFBeez",
+    "NFB", 
     "ipfs://QmbdVXi8dMDRcFfeh1m6ABVsv8Cmsn74YAsSBVmkG7sMyd/", 
-    "ipfs://Qmf3jnLANDhhVuUkjCgVDgRWoJsEo7s2dqzGGSGVrQcUhL/1.json",
-    ["0x9263bFf6ACCb60E83254E95220e7637465298171","0xe2b8651bF50913057fF47FC4f02A8e12146083B8"]],
+    "ipfs://QmRte2aJTeFtwC6YjsVTseY2wigvc7dUU5TqugR2cTwcHX/1.json",
+    ["0x49284a18822eE0d75fD928e5e0fC5a46C9213D96","0x49284a18822eE0d75fD928e5e0fC5a46C9213D96"]],
     log: true,
   });
 
+  //"ipfs://QmbdVXi8dMDRcFfeh1m6ABVsv8Cmsn74YAsSBVmkG7sMyd/"    old link
+  // "ipfs://QmRte2aJTeFtwC6YjsVTseY2wigvc7dUU5TqugR2cTwcHX/1.json", og hidden larva
   
   await deployments.execute('NFBeez', {
     from: deployer,
     log: true
   },
-  'setOnlyWhitelisted', false
+  'setOnlyWhitelisted', false,
   )
 
 

@@ -34,10 +34,10 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
   string public baseURI;
   string public baseExtension = ".json";
   string public notRevealedUri;
-  uint256 public cost = .1 ether;  // Update price
-  uint256 public maxSupply = 300;  // Will be voted
-  uint256 public maxMintAmount = 10;   // update
-  uint256 public nftPerAddressLimit = 40;
+  uint256 public cost = .01 ether;  // Update price
+  uint256 public maxSupply = 3333;  // Make 3,333
+  uint256 public maxMintAmount = 125; 
+  uint256 public nftPerAddressLimit = 200;
   bool public paused = false;
   bool public revealed = false;
   bool public onlyWhitelisted = true;
@@ -45,8 +45,7 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
   address payable[2] royaltyRecipients;
   mapping(address => uint256) public addressMintedBalance;
 
-  //events - OG
- // event MintedNFT(address sender, uint256 mintAmount);
+ 
   //events
   event MintedNFT(address sender, uint256 mintAmount, uint256 _nftId);
   //Emit event on royalty Epor.io
@@ -63,7 +62,7 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
     royaltyRecipients = _royaltyRecipients;
     
     address payable[] memory thisAddressInArray = new address payable[](1);
-    thisAddressInArray[0] = payable(_royaltyRecipients[0]);  //0xe2b8651bF50913057fF47FC4f02A8e12146083B8
+    thisAddressInArray[0] = payable(_royaltyRecipients[0]); 
     uint256[] memory royaltyWithTwoDecimals = new uint256[](1);
     royaltyWithTwoDecimals[0] = 500;
 
@@ -109,9 +108,6 @@ contract NFBeez is ERC721Enumerable, Ownable, HasSecondarySaleFees {
       _safeMint(msg.sender, supply + i);
       emit MintedNFT(msg.sender, _mintAmount, supply + i);
     }
-
-    //Emit event that Mint Job has minted the NFT - OG
-    //emit MintedNFT(msg.sender, _mintAmount);
   }
   
   function isWhitelisted(address _user) public view returns (bool) {

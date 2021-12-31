@@ -1,19 +1,20 @@
 const main = async () => {
-    const nftContractFactory = await hre.ethers.getContractFactory('PFNFT');
+    const nftContractFactory = await hre.ethers.getContractFactory('Pugeez');
     const nftContract = await nftContractFactory.deploy(
         "Gigadig",
         "GIGA", 
         "ipfs://QmRGMsp4xshQG6gzWQd3FzuwTgmQjVsuuWZ6L6uxjvGSd4/", 
         "ipfs://QmWFbcEmC9PFaWWjDvincjacEm32pak8vT272Zwy98pMkV/1.json" ,
+        ["0x49284a18822eE0d75fD928e5e0fC5a46C9213D96","0x49284a18822eE0d75fD928e5e0fC5a46C9213D96"],
         {
-            value: hre.ethers.utils.parseEther('1000.1'),
+            value: hre.ethers.utils.parseEther('1000'),
           }
         );
     await nftContract.deployed();
     console.log("Contract deployed to:", nftContract.address);
   
   
-    for(let i = 1; i < 100; i++) {
+    for(let i = 1; i < 3335; i++) {
     // Call the function.
    let txn = await nftContract.mint(1)
     // Wait for it to be mined.
